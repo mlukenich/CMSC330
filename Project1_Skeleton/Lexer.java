@@ -66,7 +66,7 @@ class Lexer {
             case ';': return Token.SEMICOLON;
             case '.': return Token.PERIOD;
             default:
-                throw new LexicalError(lexer.getLineNo(), "Unrecognized token");
+                throw new LexicalError(getLineNo(), "Unrecognized token");
         }
     }
 
