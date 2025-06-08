@@ -113,7 +113,13 @@ class Parser {
         }
         return list;
     }
-
-    private void verifyNextToken(Token expectedToken) throws LexicalError, SyntaxError, IOException {
+ private void verifyNextToken(Token expectedToken) throws LexicalError, SyntaxError, IOException {
         token = lexer.getNextToken();
-        verifyCurrentToken(expected
+        verifyCurrentToken(expectedToken);
+}
+
+private void verifyCurrentToken(Token expectedToken) throws SyntaxError {
+        if (token != expectedToken)
+            throw new SyntaxError(lexer.getLineNo(), "Expecting token " + expectedToken + " not " + token);
+}
+}
