@@ -1,7 +1,7 @@
-// CMSC 330 Advanced Programming Languages
-// Project 1 Skeleton
-// UMGC CITE
-// August 2021
+// Name: [Your Name]
+// Date: [Current Date]
+// Project: CMSC 330 Project 1
+// Description: Modified to correctly handle command-line arguments.
 
 import java.io.*;
 import java.util.*;
@@ -16,29 +16,37 @@ class Main {
     // definition file and add the graphic objects to the scene.
 
     public static void main(String[] args) {
-        Scanner stdin = new Scanner(System.in);
-        String sceneFileName;
-        File sceneFile;
-        Scene scene;
-        JFileChooser choice = new JFileChooser(new File("."));
-        int option = choice.showOpenDialog(null);
-        if (option == JFileChooser.APPROVE_OPTION)
-            sceneFile = choice.getSelectedFile();
-        else {
-            System.out.print("Enter scene file name or a single space to choose file from window: ");
-            sceneFileName = stdin.nextLine();
-            sceneFile = new File(sceneFileName);
+        File sceneFile = null;
+
+        // MODIFICATION START
+        // Check if a command-line argument was provided
+        if (args.length > 0) {
+            // If yes, use the first argument as the file name
+            sceneFile = new File(args[0]);
+        } else {
+            // If no argument is provided, fall back to the file chooser dialog
+            JFileChooser choice = new JFileChooser(new File("."));
+            int option = choice.showOpenDialog(null);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                sceneFile = choice.getSelectedFile();
+            } else {
+                // If the user cancels the file chooser, exit the program.
+                System.out.println("No file selected. Exiting.");
+                return;
+            }
         }
+        // MODIFICATION END
+
         try {
             Parser parser = new Parser(sceneFile);
-            scene = parser.parseScene();
+            Scene scene = parser.parseScene();
             scene.draw();
         } catch (SyntaxError error) {
             System.out.println(error.getMessage());
         } catch (LexicalError error) {
             System.out.println(error.getMessage());
         } catch (IOException error) {
-            System.out.println("IO Error");
+            System.out.println("IO Error: File not found or could not be read.");
         }
     }
 }
