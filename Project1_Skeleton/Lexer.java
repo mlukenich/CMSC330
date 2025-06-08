@@ -1,7 +1,7 @@
-// CMSC 330 Advanced Programming Languages
-// Project 1 Skeleton
-// UMGC CITE
-// August 2021
+// Name: [Your Name]
+// Date: [Current Date]
+// Project: CMSC 330 Project 1
+// Description: Modified to handle string literals for the Text object.
 
 import java.io.*;
 
@@ -33,6 +33,11 @@ class Lexer {
                     if (aToken.name().replace("_","").equals(tokenizer.sval.toUpperCase()))
                         return aToken;
                 return Token.IDENTIFIER;
+            // MODIFICATION START
+            // Add case for quoted strings, which are returned as the quote character
+            case '"':
+                return Token.STRING;
+            // MODIFICATION END
             case StreamTokenizer.TT_EOF:
                 return Token.EOF;
             default:
