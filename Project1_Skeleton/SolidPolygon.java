@@ -1,19 +1,29 @@
-// Name: [Your Name]
-// Date: [Current Date]
-// Project: CMSC 330 Project 1
-// Description: Defines a solid polygon by filling the shape with color.
+// CMSC 330 Advanced Programming Languages
+// Matthew Lukenich
+// Project 1
+// UMGC CITE
 
 import java.awt.*;
 
-// Class that defines all solid polygons
+/**
+ * Class that defines all solid polygons
+ */
 public class SolidPolygon extends Polygon_ {
 
-    // Constructor that calls the super constructor
+    /**
+     * Constructor that calls the super constructor
+     * @param color
+     * @param vertexCount
+     */
     public SolidPolygon(Color color, int vertexCount) {
         super(color, vertexCount);
     }
 
-    // Draws a solid polygon by filling the shape
+    /**
+     * Draws a solid polygon by filling the shape
+     * @param graphics
+     * @param polygon
+     */
     @Override
     public void drawPolygon(Graphics graphics, Polygon polygon) {
         graphics.fillPolygon(polygon);

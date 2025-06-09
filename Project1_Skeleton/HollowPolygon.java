@@ -1,22 +1,29 @@
 // CMSC 330 Advanced Programming Languages
-// Project 1 Skeleton
+// Matthew Lukenich
+// Project 1
 // UMGC CITE
-// August 2021
 
 import java.awt.*;
 
-// Class that defines all hollow polygons
-
+/**
+ * Class that defines all hollow polygons
+ */
 class HollowPolygon extends Polygon_ {
 
-    // Constructor that calls super constructor
-
+    /**
+     * Constructor that calls super constructor
+     * @param color
+     * @param vertexCount
+     */
     public HollowPolygon(Color color, int vertexCount) {
         super(color, vertexCount);
     }
 
-    // Draws hollow polygon
-
+    /**
+     * Draws hollow polygon
+     * @param graphics
+     * @param polygon
+     */
     @Override
     public void drawPolygon(Graphics graphics, Polygon polygon) {
         graphics.drawPolygon(polygon);

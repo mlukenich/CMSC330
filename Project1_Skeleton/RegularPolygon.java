@@ -1,14 +1,22 @@
-// Name: [Your Name]
-// Date: [Current Date]
-// Project: CMSC 330 Project 1
-// Description: Defines a solid regular polygon.
+// CMSC 330 Advanced Programming Languages
+// Matthew Lukenich
+// Project 1
+// UMGC CITE
 
 import java.awt.*;
 
-// Class that defines a solid regular polygon
+/**
+ * Class that defines a solid regular polygon
+ */
 public class RegularPolygon extends SolidPolygon {
 
-    // Constructor that initializes the vertices of a regular polygon
+    /**
+     * Constructor that initializes the vertices of a regular polygon
+     * @param color
+     * @param sides
+     * @param center
+     * @param radius
+     */
     public RegularPolygon(Color color, int sides, Point center, int radius) {
         super(color, sides);
         int[] x_points = new int[sides];

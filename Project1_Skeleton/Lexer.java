@@ -1,27 +1,35 @@
-// Name: [Your Name]
-// Date: [Current Date]
-// Project: CMSC 330 Project 1
-// Description: REVISED - Uses a HashMap for robust keyword tokenizing.
+// CMSC 330 Advanced Programming Languages
+// Matthew Lukenich
+// Project 1
+// UMGC CITE
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-// This class provides the lexical analyzer for project 1
+/**
+ * This class provides the lexical analyzer for project 1
+ * @author Matthew Lukenich
+ */
 class Lexer {
 
+    /** Tokenizer for reading the input stream character by character */
     private StreamTokenizer tokenizer;
-    // MODIFICATION START: Use a HashMap for keyword lookups
-    private Map<String, Token> keywords;
-    // MODIFICATION END
 
-    // Constructor that creates a lexical analyzer object given the source file
+    /** Map for efficient lookup of language keywords */
+    private Map<String, Token> keywords;
+
+    /**
+     * Constructs a Lexer for a given source file
+     *
+     * @param file The source file to be tokenized
+     * @throws FileNotFoundException if the file cannot be found
+     */
     public Lexer(File file) throws FileNotFoundException {
         tokenizer = new StreamTokenizer(new FileReader(file));
         tokenizer.ordinaryChar('.');
         tokenizer.quoteChar('"');
 
-        // MODIFICATION START: Initialize the keyword map
         keywords = new HashMap<>();
         keywords.put("SCENE", Token.SCENE);
         keywords.put("END", Token.END);
@@ -38,24 +46,24 @@ class Lexer {
         keywords.put("OFFSET", Token.OFFSET);
         keywords.put("RADIUS", Token.RADIUS);
         keywords.put("SIDES", Token.SIDES);
-        // MODIFICATION END
     }
 
-    // Returns the next token in the input stream
+    /**
+     * Scans the input stream and returns the next recognized token
+     *
+     * @return The next {@code Token} from the input stream
+     * @throws LexicalError if an unrecognized token is encountered
+     * @throws IOException  if an I/O error occurs
+     */
     public Token getNextToken() throws LexicalError, IOException {
         int tokenType = tokenizer.nextToken();
         switch (tokenType) {
             case StreamTokenizer.TT_NUMBER:
                 return Token.NUMBER;
             case StreamTokenizer.TT_WORD:
-                // MODIFICATION START: Look up the word in the keywords map
                 String word = tokenizer.sval.toUpperCase();
-                if (keywords.containsKey(word)) {
-                    return keywords.get(word);
-                }
-                // If it's not a keyword, it's an identifier
-                return Token.IDENTIFIER;
-                // MODIFICATION END
+                // Return the corresponding keyword token or IDENTIFIER if not found
+                return keywords.getOrDefault(word, Token.IDENTIFIER);
             case '"':
                 return Token.STRING;
             case StreamTokenizer.TT_EOF:
@@ -70,17 +78,29 @@ class Lexer {
         }
     }
 
-    // Returns the lexeme associated with the current token
+    /**
+     * Getter for lexeme
+     *
+     * @return The lexeme of the current token
+     */
     public String getLexeme() {
         return tokenizer.sval;
     }
 
-    // Returns the numeric value of the current token for numeric tokens
+    /**
+     * Getter for number
+     *
+     * @return The integer value of the current number token
+     */
     public int getNumber() {
         return (int) tokenizer.nval;
     }
 
-    // Returns the current line of the input file
+    /**
+     * Getter for lineno
+     *
+     * @return The current line number.
+     */
     public int getLineNo() {
         return tokenizer.lineno();
     }

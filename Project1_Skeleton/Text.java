@@ -1,24 +1,34 @@
-// Name: [Your Name]
-// Date: [Current Date]
-// Project: CMSC 330 Project 1
-// Description: Defines a drawable text object.
+// CMSC 330 Advanced Programming Languages
+// Matthew Lukenich
+// Project 1
+// UMGC CITE
 
 import java.awt.*;
 
-// Class that defines a text image
+/**
+ * Class that defines a text image
+ */
 public class Text extends Image {
 
     private Point location;
     private String text;
 
-    // Constructor that initializes the text's color, location, and content
+    /**
+     * Constructor that initializes the text's color, location, and content
+     * @param color
+     * @param location
+     * @param text
+     */
     public Text(Color color, Point location, String text) {
         super(color);
         this.location = location;
         this.text = text;
     }
 
-    // Draws the text string on the graphics context
+    /**
+     * Draws the text string on the graphics context
+     * @param graphics
+     */
     @Override
     void draw(Graphics graphics) {
         colorDrawing(graphics);
