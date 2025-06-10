@@ -1,16 +1,22 @@
 // CMSC 330 Advanced Programming Languages
-// Project 1 Skeleton
+// Matthew Lukenich
+// Project 1
 // UMGC CITE
-// August 2021
 
 import java.awt.*;
 
-// Class that defines a hollow rectangle object
-
+/**
+ * Class that defines a hollow rectangle object
+ */
 class Rectangle extends HollowPolygon {
 
-    // Constructor that initializes the vertices of the rectangle
-
+    /**
+     * Constructor that initializes the vertices of the rectangle
+     * @param color
+     * @param upperLeft
+     * @param height
+     * @param width
+     */
     public Rectangle(Color color, Point upperLeft, int height, int width) {
         super(color, 4);
         int[] x_points = {upperLeft.x, upperLeft.x + width, upperLeft.x + width, upperLeft.x};

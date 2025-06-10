@@ -1,25 +1,25 @@
-// Name: [Your Name]
-// Date: [Current Date]
-// Project: CMSC 330 Project 1
-// Description: Modified to correctly handle command-line arguments.
+// CMSC 330 Advanced Programming Languages
+// Matthew Lukenich
+// Project 1
+// UMGC CITE
 
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-// Project 1 main class
-
+/**
+ * Main
+ */
 class Main {
 
-    // The main method of the whole program, allows the name of the scene definition file to be input on the
-    // command line or selected using the file chooser dialog window. It calls the parser to parse the scene
-    // definition file and add the graphic objects to the scene.
-
+    /**
+     * main
+     * @param args
+     */
     public static void main(String[] args) {
         File sceneFile = null;
 
-        // MODIFICATION START
-        // Check if a command-line argument was provided
+        // check if a command-line argument was provided
         if (args.length > 0) {
             // If yes, use the first argument as the file name
             sceneFile = new File(args[0]);
@@ -30,12 +30,11 @@ class Main {
             if (option == JFileChooser.APPROVE_OPTION) {
                 sceneFile = choice.getSelectedFile();
             } else {
-                // If the user cancels the file chooser, exit the program.
+                // If the user cancels the file chooser, exit the program
                 System.out.println("No file selected. Exiting.");
                 return;
             }
         }
-        // MODIFICATION END
 
         try {
             Parser parser = new Parser(sceneFile);

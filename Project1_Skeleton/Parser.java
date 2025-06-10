@@ -1,25 +1,36 @@
-// Name: [Your Name]
-// Date: June 8, 2025
-// Project: CMSC 330 Project 1
-// Description: Modified to parse the expanded grammar for all new shapes.
+// CMSC 330 Advanced Programming Languages
+// Matthew Lukenich
+// Project 1
+// UMGC CITE
 
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-// This class provides the parser for project 1
+/**
+ * Parser class
+ */
 class Parser {
     private Token token;
     private Lexer lexer;
 
-    // Constructor to create new lexical analyzer from input file
+    /**
+     * Constructor to create new lexical analyzer from input file
+     * @param file
+     * @throws IOException
+     */
     public Parser(File file) throws IOException {
         lexer = new Lexer(file);
     }
 
-    // Parses the production
-    // scene -> SCENE IDENTIFIER number_list images END '.'
+    /**
+     * Parses the production
+     * @return scene
+     * @throws LexicalError
+     * @throws SyntaxError
+     * @throws IOException
+     */
     public Scene parseScene() throws LexicalError, SyntaxError, IOException {
         verifyNextToken(Token.SCENE);
         verifyNextToken(Token.IDENTIFIER);
@@ -31,7 +42,14 @@ class Parser {
         return scene;
     }
 
-    // Parses all image productions recursively
+    /*
+     * Private method. Parses all image productions recursively
+     * @param scene
+     * @param imageToken
+     * @throws LexicalError
+     * @throws SyntaxError
+     * @throws IOException
+     */ 
     private void parseImages(Scene scene, Token imageToken) throws LexicalError, SyntaxError, IOException {
         int height, width, offset, radius, sides;
         verifyNextToken(Token.COLOR);
@@ -99,6 +117,14 @@ class Parser {
             parseImages(scene, token);
     }
 
+    /*
+     * Private method to get the number list 
+     * @param count
+     * @return numberList
+     * @throws LexicalError
+     * @throws SyntaxError
+     * @throws IOException
+     */
     private int[] getNumberList(int count) throws LexicalError, SyntaxError, IOException {
         int[] list = new int[count];
         verifyNextToken(Token.LEFT_PAREN);
@@ -113,11 +139,24 @@ class Parser {
         }
         return list;
     }
+ 
+ /*
+  * Private method to verify next token 
+  * @param expectedToken
+  * @throws LexicalError
+  * @throws SyntaxError
+  * @throws IOException
+  */
  private void verifyNextToken(Token expectedToken) throws LexicalError, SyntaxError, IOException {
         token = lexer.getNextToken();
         verifyCurrentToken(expectedToken);
 }
 
+/*
+ * Private method to verify current token
+ * @param expectedToken
+ * @throws SyntaxError
+ */
 private void verifyCurrentToken(Token expectedToken) throws SyntaxError {
         if (token != expectedToken)
             throw new SyntaxError(lexer.getLineNo(), "Expecting token " + expectedToken + " not " + token);

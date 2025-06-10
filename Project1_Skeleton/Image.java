@@ -1,29 +1,46 @@
 // CMSC 330 Advanced Programming Languages
-// Project 1 Skeleton
+// Matthew Lukenich
+// Project 1
 // UMGC CITE
-// August 2021
 
 import java.awt.*;
 
-// Abstract base class that defines all image objects
-
+/**
+ * Abstract base class for a drawable image object.
+ *
+ * @author Matthew Lukenich
+ */
 abstract class Image {
 
+    /** The color of the image */
     private Color color;
 
-    // Constructor that can only be called by the subclasses to initialize the color
-
+    /**
+     * Constructs an Image with a given color
+     *
+     * @param color The {@code Color} for this image
+     */
     public Image(Color color) {
         this.color = color;
     }
 
-    // Sets the color of the image to be drawn. Must be called first by the draw function of the subclasses
-
+    /**
+     * Sets the graphics context to the image's color. This should be
+     * called by the draw method in subclasses.
+     *
+     * @param graphics The graphics context to modify
+     */
     public void colorDrawing(Graphics graphics) {
         graphics.setColor(color);
     }
 
+    /**
+     * Renders the image onto the graphics context
+     *
+     * @param graphics The graphics context on which to draw.
+     */
     abstract void draw(Graphics graphics);
+
 }
 
 
