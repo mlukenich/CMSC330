@@ -1,5 +1,6 @@
 // CMSC 330 Advanced Programming Languages
 // Matthew Lukenich
+// 06/07/2025
 // Project 1
 // UMGC CITE
 
@@ -8,7 +9,6 @@ import java.awt.*;
 /**
  * Abstract base class for a drawable image object.
  *
- * @author Matthew Lukenich
  */
 abstract class Image {
 

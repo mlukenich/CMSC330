@@ -1,5 +1,6 @@
 // CMSC 330 Advanced Programming Languages
 // Matthew Lukenich
+// 06/07/2025
 // Project 1
 // UMGC CITE
 
@@ -19,18 +20,18 @@ class Main {
     public static void main(String[] args) {
         File sceneFile = null;
 
-        // check if a command-line argument was provided
+        // check if a command line argument was provided
         if (args.length > 0) {
             // If yes, use the first argument as the file name
             sceneFile = new File(args[0]);
         } else {
-            // If no argument is provided, fall back to the file chooser dialog
+            // If no argument, use the file chooser
             JFileChooser choice = new JFileChooser(new File("."));
             int option = choice.showOpenDialog(null);
             if (option == JFileChooser.APPROVE_OPTION) {
                 sceneFile = choice.getSelectedFile();
             } else {
-                // If the user cancels the file chooser, exit the program
+                // Quit if the user cancels the file chooser
                 System.out.println("No file selected. Exiting.");
                 return;
             }
