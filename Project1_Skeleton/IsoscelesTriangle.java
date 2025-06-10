@@ -1,5 +1,6 @@
 // CMSC 330 Advanced Programming Languages
 // Matthew Lukenich
+// 06/07/2025
 // Project 1
 // UMGC CITE
 
@@ -7,7 +8,6 @@ import java.awt.*;
 
 /**
  * Class that defines a solid isosceles triangle
- * @author Matthew Lukenich
  */
 public class IsoscelesTriangle extends SolidPolygon {
 

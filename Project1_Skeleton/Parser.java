@@ -1,5 +1,6 @@
 // CMSC 330 Advanced Programming Languages
 // Matthew Lukenich
+// 06/07/2025
 // Project 1
 // UMGC CITE
 
@@ -16,7 +17,7 @@ class Parser {
     private Lexer lexer;
 
     /**
-     * Constructor to create new lexical analyzer from input file
+     * Constructor to create new Lexer from input file
      * @param file
      * @throws IOException
      */
@@ -25,7 +26,7 @@ class Parser {
     }
 
     /**
-     * Parses the production
+     * Parses the scene
      * @return scene
      * @throws LexicalError
      * @throws SyntaxError

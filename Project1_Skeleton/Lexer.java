@@ -1,5 +1,6 @@
 // CMSC 330 Advanced Programming Languages
 // Matthew Lukenich
+// 06/07/2025
 // Project 1
 // UMGC CITE
 
@@ -9,7 +10,6 @@ import java.util.Map;
 
 /**
  * This class provides the lexical analyzer for project 1
- * @author Matthew Lukenich
  */
 class Lexer {
 
@@ -51,7 +51,7 @@ class Lexer {
     /**
      * Scans the input stream and returns the next recognized token
      *
-     * @return The next {@code Token} from the input stream
+     * @return The next Token from the input stream
      * @throws LexicalError if an unrecognized token is encountered
      * @throws IOException  if an I/O error occurs
      */
@@ -62,7 +62,7 @@ class Lexer {
                 return Token.NUMBER;
             case StreamTokenizer.TT_WORD:
                 String word = tokenizer.sval.toUpperCase();
-                // Return the corresponding keyword token or IDENTIFIER if not found
+                // Return the corresponding keyword or IDENTIFIER if not found
                 return keywords.getOrDefault(word, Token.IDENTIFIER);
             case '"':
                 return Token.STRING;
