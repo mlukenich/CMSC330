@@ -14,25 +14,31 @@
  * Name: [Your Name]
  * Date: [Current Date]
  * Project: CMSC 330 Project 2
- * Description: Final corrected parsing logic. Fixes segfault by implementing a robust parseAssignments function.
+ * Description: Corrected parsing logic to fix segmentation fault.
  */
 
 // Forward declaration for the main recursive parser
 Expression* parseExpression(std::stringstream& in);
 
-// This function parses a base unit: a literal, a variable,
+// This function now ONLY parses a base unit: a literal, a variable,
 // or a fully-enclosed parenthesized sub-expression.
 Expression* parseOperand(std::stringstream& in) {
+    // Regex for variable: starts with a letter, followed by letters, numbers, or underscores.
     static const std::regex var_regex("[a-zA-Z][a-zA-Z0-9_]*");
+    // Regex for literal: matches integers and floating-point numbers.
     static const std::regex literal_regex("[0-9]+(\\.[0-9]+)?");
     
+    // Peek at the next non-whitespace character
     in >> std::ws;
     char c = in.peek();
 
     if (isdigit(c) || c == '.') {
         std::string temp;
         in >> temp;
-        if (std::regex_match(temp, literal_regex)) {
+        // Simple check to avoid misinterpreting parts of floats as separate tokens
+        if (temp.find('(') != std::string::npos || temp.find(')') != std::string::npos) {
+             in.seekg(-(long)temp.length(), std::ios_base::cur);
+        } else if (std::regex_match(temp, literal_regex)) {
             return new Literal(stod(temp));
         }
     } else if (isalpha(c)) {
@@ -50,7 +56,7 @@ Expression* parseOperand(std::stringstream& in) {
         }
         return expr;
     }
-    return nullptr;
+    return nullptr; // Should not happen with syntactically correct input
 }
 
 
@@ -62,6 +68,7 @@ Expression* parseExpression(std::stringstream& in) {
     in >> std::ws;
     char op = in.peek();
 
+    // If there's no operator, it's just a single expression
     if (in.eof() || op == ')' || op == ',') {
         return left;
     }
@@ -86,7 +93,7 @@ Expression* parseExpression(std::stringstream& in) {
     }
 
     // Binary operators
-    Expression* right = parseOperand(in);
+    Expression* right = parseOperand(in); // <--- THE FIX IS HERE
     switch (op) {
         case '+': return new Add(left, right);
         case '-': return new Sub(left, right);
@@ -98,44 +105,49 @@ Expression* parseExpression(std::stringstream& in) {
         case '>': return new Max(left, right);
         case '&': return new Avg(left, right);
     }
-    return nullptr;
+    return nullptr; // Should not be reached
 }
 
-// **Robust implementation of parseAssignments**
-// This version uses standard token extraction and avoids manual stream manipulation.
+
 void parseAssignments(std::stringstream& in) {
+    // Regex for variable: starts with a letter, followed by letters, numbers, or underscores.
     static const std::regex var_regex("[a-zA-Z][a-zA-Z0-9_]*");
+    
+    char p, eq;
+    std::string var;
+    double val;
     std::vector<std::string> defined_vars;
-    char eq_op, comma;
 
     do {
-        std::string variableName;
-        in >> variableName; // Safely reads the next token, e.g., "x" from "x = 1"
+        in >> var;
+        std::string temp_var;
 
-        if (!std::regex_match(variableName, var_regex)) {
-            // If the token isn't a valid variable, skip this iteration.
-            // This might happen if the line ends unexpectedly.
-            continue;
+        size_t eq_pos = var.find('=');
+        if (eq_pos != std::string::npos) {
+            temp_var = var.substr(0, eq_pos);
+            in.seekg(-(long)(var.length() - eq_pos), std::ios_base::cur);
+        } else {
+            temp_var = var;
         }
 
-        // Check for duplicate variable initialization in the same statement
+        if (!std::regex_match(temp_var, var_regex)) continue;
+
+        // Check for duplicate definition
         for(const auto& defined : defined_vars) {
-            if (defined == variableName) {
-                throw DuplicateVariable(variableName);
+            if (defined == temp_var) {
+                throw DuplicateVariable(temp_var);
             }
         }
-        defined_vars.push_back(variableName);
-
-        double value;
-        in >> eq_op >> value; // Safely reads the '=' and the numeric value
-        if (eq_op == '=') {
-            symbolTable.insert(variableName, value);
-        }
+        defined_vars.push_back(temp_var);
+        
+        in >> eq >> val;
+        symbolTable.insert(temp_var, val);
 
         in >> std::ws;
-        comma = in.peek(); // Peek ahead to see if a comma follows
-    
-    // The loop continues only if the next character is a comma.
-    // The "in.get(comma)" part consumes the comma and advances the stream.
-    } while (comma == ',' && in.get(comma));
+        p = in.peek();
+        if (p == ',') {
+            in.get(); // consume comma
+        }
+
+    } while (p == ',');
 }

@@ -40,6 +40,10 @@ int main() {
         try {
             // Call the corrected top-level parser
             expression = parseExpression(in);
+            if (!expression) {
+                std::cerr << "Parse error: expression is null\n";
+            continue;
+            }
             
             in >> std::ws;
             if (in.peek() == ',') {
