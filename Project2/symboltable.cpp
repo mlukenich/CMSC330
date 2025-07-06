@@ -1,27 +1,35 @@
-#include "symboltable.h"
-#include "customerrors.h" // Include for UninitializedVariable
-
 /*
- * Name: [Your Name]
- * Date: [Current Date]
- * Project: CMSC 330 Project 2
- * Description: Implementation for the modified SymbolTable.
+ * symboltable.cpp
+ *
+ * Created on: July 6, 2025
+ * Author: [Your Name]
+ * Description: Implements the SymbolTable class functions.
  */
 
-void SymbolTable::insert(const std::string& variable, double value) {
-    symbolTable[variable] = value;
+#include <string>
+#include <map>
+#include <stdexcept>
+#include "symboltable.h"
+
+using namespace std;
+
+void SymbolTable::insert(string variable, double value) {
+    variableMap[variable] = value;
 }
 
-double SymbolTable::lookUp(const std::string& variable) const {
-    auto it = symbolTable.find(variable);
-    if (it == symbolTable.end()) {
-        // Throw exception if variable is not found
-        throw UninitializedVariable(variable);
+double SymbolTable::lookUp(string variable) const {
+    if (variableMap.find(variable) == variableMap.end()) {
+        // This will be caught later to handle uninitialized variable errors
+        throw runtime_error("Error: Variable '" + variable + "' not found.");
     }
-    return it->second;
+    return variableMap.at(variable);
+}
+
+bool SymbolTable::exists(string variable) const {
+    return variableMap.find(variable) != variableMap.end();
 }
 
 void SymbolTable::clear() {
-    symbolTable.clear();
+    variableMap.clear();
 }
 

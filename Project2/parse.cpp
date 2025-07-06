@@ -1,153 +1,128 @@
-#include "expression.h"
-#include "operand.h"
-#include "binaryexpression.h"
-#include "unaryexpression.h"
-#include "ternaryexpression.h"
-#include "quaternaryexpression.h"
-#include "customerrors.h"
-#include <sstream>
-#include <regex>
-#include <cctype>
-#include <vector>
-
 /*
- * Name: [Your Name]
- * Date: [Current Date]
- * Project: CMSC 330 Project 2
- * Description: Corrected parsing logic to fix segmentation fault.
+ * parse.cpp
+ *
+ * Created on: July 6, 2025
+ * Author: [Your Name]
+ * Description: A recursive descent parser that builds an Expression AST.
  */
 
-// Forward declaration for the main recursive parser
-Expression* parseExpression(std::stringstream& in);
+#include <string>
+#include <vector>
+#include <stdexcept>
+#include "parse.h"
 
-// This function now ONLY parses a base unit: a literal, a variable,
-// or a fully-enclosed parenthesized sub-expression.
-Expression* parseOperand(std::stringstream& in) {
-    // Regex for variable: starts with a letter, followed by letters, numbers, or underscores.
-    static const std::regex var_regex("[a-zA-Z][a-zA-Z0-9_]*");
-    // Regex for literal: matches integers and floating-point numbers.
-    static const std::regex literal_regex("[0-9]+(\\.[0-9]+)?");
-    
-    // Peek at the next non-whitespace character
-    in >> std::ws;
-    char c = in.peek();
+using namespace std;
 
-    if (isdigit(c) || c == '.') {
-        std::string temp;
-        in >> temp;
-        // Simple check to avoid misinterpreting parts of floats as separate tokens
-        if (temp.find('(') != std::string::npos || temp.find(')') != std::string::npos) {
-             in.seekg(-(long)temp.length(), std::ios_base::cur);
-        } else if (std::regex_match(temp, literal_regex)) {
-            return new Literal(stod(temp));
+// A simple structure to hold tokens
+struct Token {
+    enum Type { LPAREN, RPAREN, OP, LITERAL, VAR, END };
+    Type type;
+    string text;
+};
+
+// --- Forward Declarations of Parser Functions ---
+Expression* parse_expression(vector<Token>& tokens, int& pos);
+
+
+// --- Tokenizer ---
+vector<Token> tokenize(const string& text) {
+    vector<Token> tokens;
+    for (int i = 0; i < text.length(); ++i) {
+        char c = text[i];
+        if (isspace(c)) continue;
+
+        if (c == '(') tokens.push_back({Token::LPAREN, "("});
+        else if (c == ')') tokens.push_back({Token::RPAREN, ")"});
+        else if (string("+-*/%^<>&?#~").find(c) != string::npos) {
+             tokens.push_back({Token::OP, string(1, c)});
         }
-    } else if (isalpha(c)) {
-        std::string temp;
-        in >> temp;
-        if (std::regex_match(temp, var_regex)) {
-            return new Variable(temp);
-        }
-    } else if (c == '(') {
-        in.get(); // Consume '('
-        Expression* expr = parseExpression(in);
-        in >> std::ws;
-        if (in.peek() == ')') {
-            in.get(); // Consume ')'
-        }
-        return expr;
-    }
-    return nullptr; // Should not happen with syntactically correct input
-}
-
-
-// This is the main parser for the content INSIDE parentheses.
-// It handles all expression types: unary, binary, ternary, and quaternary.
-Expression* parseExpression(std::stringstream& in) {
-    Expression* left = parseOperand(in);
-
-    in >> std::ws;
-    char op = in.peek();
-
-    // If there's no operator, it's just a single expression
-    if (in.eof() || op == ')' || op == ',') {
-        return left;
-    }
-
-    in.get(); // Consume the operator
-
-    if (op == '~') { // Postfix Unary operator
-        return new Negate(left);
-    }
-
-    if (op == '?') { // Ternary operator
-        Expression* true_expr = parseOperand(in);
-        Expression* false_expr = parseOperand(in);
-        return new Conditional(left, true_expr, false_expr);
-    }
-    
-    if (op == '#') { // Quaternary operator
-        Expression* less_expr = parseOperand(in);
-        Expression* equal_expr = parseOperand(in);
-        Expression* greater_expr = parseOperand(in);
-        return new ComplexConditional(left, less_expr, equal_expr, greater_expr);
-    }
-
-    // Binary operators
-    Expression* right = parseOperand(in); // <--- THE FIX IS HERE
-    switch (op) {
-        case '+': return new Add(left, right);
-        case '-': return new Sub(left, right);
-        case '*': return new Mul(left, right);
-        case '/': return new Div(left, right);
-        case '%': return new Rem(left, right);
-        case '^': return new Power(left, right);
-        case '<': return new Min(left, right);
-        case '>': return new Max(left, right);
-        case '&': return new Avg(left, right);
-    }
-    return nullptr; // Should not be reached
-}
-
-
-void parseAssignments(std::stringstream& in) {
-    // Regex for variable: starts with a letter, followed by letters, numbers, or underscores.
-    static const std::regex var_regex("[a-zA-Z][a-zA-Z0-9_]*");
-    
-    char p, eq;
-    std::string var;
-    double val;
-    std::vector<std::string> defined_vars;
-
-    do {
-        in >> var;
-        std::string temp_var;
-
-        size_t eq_pos = var.find('=');
-        if (eq_pos != std::string::npos) {
-            temp_var = var.substr(0, eq_pos);
-            in.seekg(-(long)(var.length() - eq_pos), std::ios_base::cur);
-        } else {
-            temp_var = var;
-        }
-
-        if (!std::regex_match(temp_var, var_regex)) continue;
-
-        // Check for duplicate definition
-        for(const auto& defined : defined_vars) {
-            if (defined == temp_var) {
-                throw DuplicateVariable(temp_var);
+        else if (isdigit(c) || c == '.') {
+            string num_str;
+            while (i < text.length() && (isdigit(text[i]) || text[i] == '.')) {
+                num_str += text[i];
+                i++;
             }
+            i--;
+            tokens.push_back({Token::LITERAL, num_str});
         }
-        defined_vars.push_back(temp_var);
+        else if (isalpha(c)) {
+            string var_str;
+            while (i < text.length() && (isalnum(text[i]) || text[i] == '_')) {
+                var_str += text[i];
+                i++;
+            }
+            i--;
+            tokens.push_back({Token::VAR, var_str});
+        } else {
+            throw runtime_error("Syntax Error: Invalid character in expression: " + string(1, c));
+        }
+    }
+    tokens.push_back({Token::END, ""});
+    return tokens;
+}
+
+
+// --- Parser ---
+
+// Main entry point for the parser
+Expression* parse(const string& text) {
+    vector<Token> tokens = tokenize(text);
+    int pos = 0;
+    Expression* result = parse_expression(tokens, pos);
+    if (tokens[pos].type != Token::END) {
+        throw runtime_error("Syntax Error: Extra characters at end of expression.");
+    }
+    return result;
+}
+
+// Parses any expression. According to the grammar, expressions are either
+// literals, variables, or parenthesized groups.
+Expression* parse_expression(vector<Token>& tokens, int& pos) {
+    if (tokens[pos].type == Token::LITERAL) {
+        return new Literal(stod(tokens[pos++].text));
+    }
+    if (tokens[pos].type == Token::VAR) {
+        return new Variable(tokens[pos++].text);
+    }
+    if (tokens[pos].type == Token::LPAREN) {
+        pos++; // Consume '('
+
+        // This is the core of the recursive structure
+        Expression* first = parse_expression(tokens, pos);
+
+        // Check what comes after the first expression
+        Token op_token = tokens[pos++];
+
+        if (op_token.type != Token::OP) throw runtime_error("Syntax Error: Expected operator.");
         
-        in >> eq >> val;
-        symbolTable.insert(temp_var, val);
+        char op_char = op_token.text[0];
 
-        in >> std::ws;
-        p = in.peek();
-        if (p == ',') {
-            in.get(); // consume comma
+        // Handle different expression types based on the operator
+        if (op_char == '~') { // Postfix Unary
+            if (tokens[pos++].type != Token::RPAREN) throw runtime_error("Syntax Error: Expected ')' after unary expression.");
+            return new UnaryExpression(first);
         }
-
-    } while (p == ',');
+        if (string("+-*/%^<>&").find(op_char) != string::npos) { // Binary
+            Expression* second = parse_expression(tokens, pos);
+            if (tokens[pos++].type != Token::RPAREN) throw runtime_error("Syntax Error: Expected ')' after binary expression.");
+            return new BinaryExpression(first, op_char, second);
+        }
+        if (op_char == '?') { // Ternary
+            Expression* second = parse_expression(tokens, pos);
+            Expression* third = parse_expression(tokens, pos);
+            if (tokens[pos++].type != Token::RPAREN) throw runtime_error("Syntax Error: Expected ')' after ternary expression.");
+            return new TernaryExpression(first, second, third);
+        }
+        if (op_char == '#') { // Quaternary
+            Expression* second = parse_expression(tokens, pos);
+            Expression* third = parse_expression(tokens, pos);
+            Expression* fourth = parse_expression(tokens, pos);
+            if (tokens[pos++].type != Token::RPAREN) throw runtime_error("Syntax Error: Expected ')' after quaternary expression.");
+            return new QuaternaryExpression(first, second, third, fourth);
+        }
+        
+        throw runtime_error("Syntax Error: Unknown operator " + op_token.text);
+    }
+    
+    throw runtime_error("Syntax Error: Unexpected token " + tokens[pos].text);
 }

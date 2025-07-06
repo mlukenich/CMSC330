@@ -1,23 +1,29 @@
-#pragma once
+/*
+ * symboltable.h
+ *
+ * Created on: July 6, 2025
+ * Author: [Your Name]
+ * Description: Defines a symbol table for storing variable names and their floating-point values.
+ */
+
+#ifndef SYMBOLTABLE_H_
+#define SYMBOLTABLE_H_
+
 #include <string>
-#include <vector>
 #include <map>
 
-/*
- * Name: [Your Name]
- * Date: [Current Date]
- * Project: CMSC 330 Project 2
- * Description: Modified SymbolTable to support double values and clearing.
- */
+using namespace std;
 
 class SymbolTable {
 public:
-    SymbolTable() = default;
-    void insert(const std::string& variable, double value);
-    double lookUp(const std::string& variable) const;
-    void clear(); // New method to clear the table for the next statement
+    SymbolTable() {}
+    void insert(string variable, double value);
+    double lookUp(string variable) const;
+    bool exists(string variable) const;
+    void clear(); // Added to reset the table for each new statement
 private:
-    std::map<std::string, double> symbolTable;
+    map<string, double> variableMap;
 };
 
+#endif /* SYMBOLTABLE_H_ */
 
