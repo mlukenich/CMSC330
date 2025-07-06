@@ -7,14 +7,13 @@
  * Name: [Your Name]
  * Date: [Current Date]
  * Project: CMSC 330 Project 2
- * Description: Defines literal and variable operands. Updated for doubles and error checking.
+ * Description: Defines literal and variable operands. Parsing logic moved to parse.cpp.
  */
 
 extern SymbolTable symbolTable;
 
 class Operand : public Expression {
-public:
-    static Expression* parse(std::stringstream& in);
+    // The static parse method has been removed from the class
 };
 
 class Literal : public Operand {

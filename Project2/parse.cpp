@@ -8,73 +8,85 @@
 #include <sstream>
 #include <regex>
 #include <cctype>
+#include <vector>
 
 /*
  * Name: [Your Name]
  * Date: [Current Date]
  * Project: CMSC 330 Project 2
- * Description: Complete parser rewrite to support the new grammar and tokens.
+ * Description: Final corrected parsing logic. Fixes segfault by implementing a robust parseAssignments function.
  */
 
-// Forward declaration
+// Forward declaration for the main recursive parser
 Expression* parseExpression(std::stringstream& in);
 
-Expression* Operand::parse(std::stringstream& in) {
-    // Regex for variable: starts with a letter, followed by letters, numbers, or underscores.
+// This function parses a base unit: a literal, a variable,
+// or a fully-enclosed parenthesized sub-expression.
+Expression* parseOperand(std::stringstream& in) {
     static const std::regex var_regex("[a-zA-Z][a-zA-Z0-9_]*");
-    // Regex for literal: matches integers and floating-point numbers.
     static const std::regex literal_regex("[0-9]+(\\.[0-9]+)?");
-
-    char c;
-    in >> c;
+    
+    in >> std::ws;
+    char c = in.peek();
 
     if (isdigit(c) || c == '.') {
-        in.putback(c);
         std::string temp;
         in >> temp;
         if (std::regex_match(temp, literal_regex)) {
             return new Literal(stod(temp));
         }
     } else if (isalpha(c)) {
-        in.putback(c);
         std::string temp;
         in >> temp;
         if (std::regex_match(temp, var_regex)) {
             return new Variable(temp);
         }
     } else if (c == '(') {
+        in.get(); // Consume '('
         Expression* expr = parseExpression(in);
-        in >> c; // consume ')'
+        in >> std::ws;
+        if (in.peek() == ')') {
+            in.get(); // Consume ')'
+        }
         return expr;
     }
-    return nullptr; // Should not happen with syntactically correct input
+    return nullptr;
 }
 
-Expression* parseExpression(std::stringstream& in) {
-    Expression* left = Operand::parse(in);
 
-    char op;
-    in >> op;
+// This is the main parser for the content INSIDE parentheses.
+// It handles all expression types: unary, binary, ternary, and quaternary.
+Expression* parseExpression(std::stringstream& in) {
+    Expression* left = parseOperand(in);
+
+    in >> std::ws;
+    char op = in.peek();
+
+    if (in.eof() || op == ')' || op == ',') {
+        return left;
+    }
+
+    in.get(); // Consume the operator
 
     if (op == '~') { // Postfix Unary operator
         return new Negate(left);
     }
 
     if (op == '?') { // Ternary operator
-        Expression* true_expr = parseExpression(in);
-        Expression* false_expr = parseExpression(in);
+        Expression* true_expr = parseOperand(in);
+        Expression* false_expr = parseOperand(in);
         return new Conditional(left, true_expr, false_expr);
     }
     
     if (op == '#') { // Quaternary operator
-        Expression* less_expr = parseExpression(in);
-        Expression* equal_expr = parseExpression(in);
-        Expression* greater_expr = parseExpression(in);
+        Expression* less_expr = parseOperand(in);
+        Expression* equal_expr = parseOperand(in);
+        Expression* greater_expr = parseOperand(in);
         return new ComplexConditional(left, less_expr, equal_expr, greater_expr);
     }
 
     // Binary operators
-    Expression* right = parseExpression(in);
+    Expression* right = parseOperand(in);
     switch (op) {
         case '+': return new Add(left, right);
         case '-': return new Sub(left, right);
@@ -86,47 +98,44 @@ Expression* parseExpression(std::stringstream& in) {
         case '>': return new Max(left, right);
         case '&': return new Avg(left, right);
     }
-    return nullptr; // Should not happen
+    return nullptr;
 }
 
-
+// **Robust implementation of parseAssignments**
+// This version uses standard token extraction and avoids manual stream manipulation.
 void parseAssignments(std::stringstream& in) {
-    // Regex for variable: starts with a letter, followed by letters, numbers, or underscores.
     static const std::regex var_regex("[a-zA-Z][a-zA-Z0-9_]*");
-    
-    char p, eq;
-    std::string var;
-    double val;
     std::vector<std::string> defined_vars;
+    char eq_op, comma;
 
     do {
-        in >> var;
-        std::string temp_var;
-        // Extract variable name correctly
-        for(char ch : var) {
-            if (ch != '=') {
-                temp_var += ch;
-            } else {
-                break;
-            }
+        std::string variableName;
+        in >> variableName; // Safely reads the next token, e.g., "x" from "x = 1"
+
+        if (!std::regex_match(variableName, var_regex)) {
+            // If the token isn't a valid variable, skip this iteration.
+            // This might happen if the line ends unexpectedly.
+            continue;
         }
-        
-        // Put back '=' if it was extracted
-        in.seekg(- (var.length() - temp_var.length()), std::ios_base::cur);
 
-
-        if (!std::regex_match(temp_var, var_regex)) continue;
-
-        // Check for duplicate definition
+        // Check for duplicate variable initialization in the same statement
         for(const auto& defined : defined_vars) {
-            if (defined == temp_var) {
-                throw DuplicateVariable(temp_var);
+            if (defined == variableName) {
+                throw DuplicateVariable(variableName);
             }
         }
-        defined_vars.push_back(temp_var);
-        
-        in >> eq >> val;
-        symbolTable.insert(temp_var, val);
-        in >> p;
-    } while (p == ',');
+        defined_vars.push_back(variableName);
+
+        double value;
+        in >> eq_op >> value; // Safely reads the '=' and the numeric value
+        if (eq_op == '=') {
+            symbolTable.insert(variableName, value);
+        }
+
+        in >> std::ws;
+        comma = in.peek(); // Peek ahead to see if a comma follows
+    
+    // The loop continues only if the next character is a comma.
+    // The "in.get(comma)" part consumes the comma and advances the stream.
+    } while (comma == ',' && in.get(comma));
 }
