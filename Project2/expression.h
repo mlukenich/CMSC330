@@ -1,12 +1,14 @@
-// CMSC 330 Advanced Programming Languages
-// Project 2 Skeleton
-// UMGC CITE
-// Spring 2023
+#pragma once
 
-// This file contains the definition of the Expression class, which is an abstract class that contains one
-// abstract (pure virtual) function named evaluate, which must be implemented by all its subclasses.
+/*
+ * Name: [Your Name]
+ * Date: [Current Date]
+ * Project: CMSC 330 Project 2
+ * Description: Base class for all expressions, updated to return double.
+ */
 
 class Expression {
-public: 
+public:
+    virtual ~Expression() = default;
     virtual double evaluate() = 0;
 };

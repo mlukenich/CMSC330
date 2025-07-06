@@ -1,27 +1,23 @@
-// CMSC 330 Advanced Programming Languages
-// Project 2 Skeleton
-// UMGC CITE
-// Spring 2023
+#pragma once
+#include <string>
+#include <vector>
+#include <map>
 
-// This file contains the class definition of the SymbolTable class. The symbol table is represented
-// with a vector (list) of type Symbol which is a pair consisting of a variable and its associated value.
-// The body of its functions are defined in symboltable.cpp. 
+/*
+ * Name: [Your Name]
+ * Date: [Current Date]
+ * Project: CMSC 330 Project 2
+ * Description: Modified SymbolTable to support double values and clearing.
+ */
 
 class SymbolTable {
 public:
-    SymbolTable() {}
-    void insert(string variable, double value);
-    double lookUp(string variable) const;
+    SymbolTable() = default;
+    void insert(const std::string& variable, double value);
+    double lookUp(const std::string& variable) const;
+    void clear(); // New method to clear the table for the next statement
 private:
-    struct Symbol {
-        Symbol(string variable, double value) {
-            this->variable = variable;
-            this->value = value;
-        }
-        string variable;
-        double value;
-    };
-    vector<Symbol> elements;
+    std::map<std::string, double> symbolTable;
 };
 
 
