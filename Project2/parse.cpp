@@ -1,9 +1,8 @@
 /*
- * parse.cpp
- *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: A recursive descent parser that builds an Expression AST.
+ * File: parse.cpp
+ * Name: Matt Lukenich
+ * CMSC330 Project2
+ * A recursive descent parser that builds an Expression AST
  */
 
 #include <string>
@@ -13,18 +12,18 @@
 
 using namespace std;
 
-// A simple structure to hold tokens
+// a structure to hold tokens
 struct Token {
     enum Type { LPAREN, RPAREN, OP, LITERAL, VAR, END };
     Type type;
     string text;
 };
 
-// --- Forward Declarations of Parser Functions ---
+// parser function
 Expression* parse_expression(vector<Token>& tokens, int& pos);
 
 
-// --- Tokenizer ---
+// tokenizer
 vector<Token> tokenize(const string& text) {
     vector<Token> tokens;
     for (int i = 0; i < text.length(); ++i) {
@@ -61,10 +60,7 @@ vector<Token> tokenize(const string& text) {
     return tokens;
 }
 
-
-// --- Parser ---
-
-// Main entry point for the parser
+// main entry point for the parser
 Expression* parse(const string& text) {
     vector<Token> tokens = tokenize(text);
     int pos = 0;
@@ -75,8 +71,8 @@ Expression* parse(const string& text) {
     return result;
 }
 
-// Parses any expression. According to the grammar, expressions are either
-// literals, variables, or parenthesized groups.
+// Parses any expression.
+// literals, variables, or () groups
 Expression* parse_expression(vector<Token>& tokens, int& pos) {
     if (tokens[pos].type == Token::LITERAL) {
         return new Literal(stod(tokens[pos++].text));
@@ -85,12 +81,12 @@ Expression* parse_expression(vector<Token>& tokens, int& pos) {
         return new Variable(tokens[pos++].text);
     }
     if (tokens[pos].type == Token::LPAREN) {
-        pos++; // Consume '('
+        pos++; 
 
-        // This is the core of the recursive structure
+        // core recursive structure
         Expression* first = parse_expression(tokens, pos);
 
-        // Check what comes after the first expression
+        // check what comes after the first expression
         Token op_token = tokens[pos++];
 
         if (op_token.type != Token::OP) throw runtime_error("Syntax Error: Expected operator.");
@@ -113,7 +109,7 @@ Expression* parse_expression(vector<Token>& tokens, int& pos) {
             if (tokens[pos++].type != Token::RPAREN) throw runtime_error("Syntax Error: Expected ')' after ternary expression.");
             return new TernaryExpression(first, second, third);
         }
-        if (op_char == '#') { // Quaternary
+        if (op_char == '#') { // quaternary
             Expression* second = parse_expression(tokens, pos);
             Expression* third = parse_expression(tokens, pos);
             Expression* fourth = parse_expression(tokens, pos);

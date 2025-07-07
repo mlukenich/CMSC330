@@ -1,6 +1,12 @@
 #pragma once
 #include "expression.h"
 
+/**
+ * File: QuaternaryExpression.h
+ * Name: Matt Lukenich
+ * CMSC330 Project 2
+ * Header file for a Quaternary Expression
+ */
 class QuaternaryExpression : public Expression {
 public:
     QuaternaryExpression(Expression* first, Expression* second, Expression* third, Expression* fourth)

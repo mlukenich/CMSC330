@@ -1,21 +1,22 @@
 /*
- * expression.cpp
- *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Implements the evaluate() methods for the Expression AST nodes.
+ * File name: expression.cpp
+ * Matt Lukenich
+ * CMSC330 Project 2
+ * Implements the evaluate methods for the Expression AST nodes.
  */
 
 #include "expression.h"
 #include "symboltable.h"
-#include <cmath>       // For fmod, pow
+#include <cmath>       // For fmod and pow
 #include <stdexcept>   // For runtime_error
-#include <algorithm>   // For min, max
+#include <algorithm>   // For min and max
 
+//returns literal value of symbols
 double Literal::evaluate(const SymbolTable& symbols) const {
     return value;
 }
 
+//looks up variable in symbols
 double Variable::evaluate(const SymbolTable& symbols) const {
     // The lookUp function will throw an error if the variable is not found
     return symbols.lookUp(name);
@@ -26,6 +27,7 @@ double UnaryExpression::evaluate(const SymbolTable& symbols) const {
     return -expr->evaluate(symbols);
 }
 
+// evaluate function, returns double value of expression
 double BinaryExpression::evaluate(const SymbolTable& symbols) const {
     double leftVal = left->evaluate(symbols);
     double rightVal = right->evaluate(symbols);

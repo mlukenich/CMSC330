@@ -1,9 +1,7 @@
 /*
- * main.cpp
- *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Main entry point for the expression evaluator. Reads statements
+ * File: main.cpp
+ * Name: Matt Lukenich
+ * Main entry point for the expression evaluator. Reads statements
  * from a file and uses the Statement class to evaluate them.
  */
 
@@ -11,7 +9,7 @@
 #include <string>
 #include <fstream>
 #include <stdexcept>
-#include "statement.h" // Include our new class
+#include "statement.h"
 
 using namespace std;
 

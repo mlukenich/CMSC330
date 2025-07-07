@@ -1,9 +1,8 @@
 /*
- * expression.h
+ * File: expression.h
  *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Defines the class hierarchy for the Expression Abstract Syntax Tree (AST).
+ * Name: Matt Lukenich
+ * Defines the class hierarchy for the AST.
  */
 
 #ifndef EXPRESSION_H_
@@ -22,7 +21,7 @@ public:
     virtual double evaluate(const SymbolTable& symbols) const = 0;
 };
 
-// Represents a literal numeric value (e.g., 5.5)
+// Represents a literal numeric value
 class Literal : public Expression {
 public:
     Literal(double value) : value(value) {}
@@ -31,7 +30,7 @@ private:
     double value;
 };
 
-// Represents a variable (e.g., x)
+// Represents a variable
 class Variable : public Expression {
 public:
     Variable(string name) : name(name) {}
@@ -40,7 +39,7 @@ private:
     string name;
 };
 
-// Represents a unary expression (e.g., a~)
+// Represents a unary expression
 class UnaryExpression : public Expression {
 public:
     UnaryExpression(Expression* expr) : expr(expr) {}
@@ -50,7 +49,7 @@ private:
     Expression* expr;
 };
 
-// Represents a binary expression (e.g., a + b)
+// Represents a binary expression
 class BinaryExpression : public Expression {
 public:
     BinaryExpression(Expression* left, char op, Expression* right) : left(left), op(op), right(right) {}
@@ -62,7 +61,7 @@ private:
     Expression* right;
 };
 
-// Represents a ternary expression (e.g., a ? b c)
+// Represents a ternary expression
 class TernaryExpression : public Expression {
 public:
     TernaryExpression(Expression* first, Expression* second, Expression* third)
@@ -75,7 +74,7 @@ private:
     Expression* third;
 };
 
-// Represents a quaternary expression (e.g., a # b c d)
+//Represents a quaternary expression
 class QuaternaryExpression : public Expression {
 public:
     QuaternaryExpression(Expression* first, Expression* second, Expression* third, Expression* fourth)
@@ -89,4 +88,4 @@ private:
     Expression* fourth;
 };
 
-#endif /* EXPRESSION_H_ */
+#endif

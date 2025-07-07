@@ -6,8 +6,14 @@
 
 extern SymbolTable symbolTable;
 
+/*
+ * File: operand.h
+ * Name: Matt Lukenich
+ * Calls evaluate function for differnt object types 
+ */
 class Operand : public Expression {};
 
+// calls evaluate for literal values
 class Literal : public Operand {
 public:
     explicit Literal(double value) : value(value) {}
@@ -19,6 +25,7 @@ private:
     double value;
 };
 
+// calls evaluate for variables
 class Variable : public Operand {
 public:
     explicit Variable(std::string name) : name(std::move(name)) {}

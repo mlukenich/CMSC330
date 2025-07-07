@@ -1,6 +1,12 @@
 #pragma once
 #include "expression.h"
 
+/**
+ * File: ternaryexpression.h
+ * Name: Matt Lukenich
+ * CMSC330 Project 2
+ * Header file for a ternary expression
+ */
 class TernaryExpression : public Expression {
 public:
     TernaryExpression(Expression* first, Expression* second, Expression* third)

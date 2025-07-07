@@ -1,9 +1,7 @@
 /*
- * parse.h
- *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Header for the recursive descent parser.
+ * File: parse.h
+ * Name: Matt Lukencih
+ * header for the recursive descent parser
  */
 
 #ifndef PARSE_H_
@@ -14,7 +12,6 @@
 
 using namespace std;
 
-// The main function of our new parser
 Expression* parse(const string& text);
 
-#endif /* PARSE_H_ */
+#endif 

@@ -1,20 +1,20 @@
 /*
- * statement.cpp
+ * File: statement.cpp
  *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Implements the Statement class.
+ * Name: Matt Lukenich
+ * CMSC330 Project 2
+ * Implements the Statement class
  */
 
 #include "statement.h"
-#include "parse.h"     // For the new parse() function
-#include "expression.h" // For the Expression class
+#include "parse.h"     
+#include "expression.h"
 #include <sstream>
 #include <stdexcept>
 
 using namespace std;
 
-// Helper function to trim whitespace from both ends of a string
+// function to trim whitespace
 string trim(const string& str) {
     size_t first = str.find_first_not_of(" \t\n\r");
     if (string::npos == first) {
@@ -60,7 +60,7 @@ Statement::Statement(const string& line) {
 
         // Check for duplicate assignments
         if (assignments.count(var_name)) {
-            // Check for uninitialized variables and re-initialization
+            // Check for uninitialized variables and reinitialization
             string error_message = "Error: Variable '" + var_name + "' initialized more than once.";
             throw runtime_error(error_message);
         }
@@ -69,7 +69,7 @@ Statement::Statement(const string& line) {
 }
 
 double Statement::evaluate() {
-    SymbolTable symbols; // Create a new, empty symbol table for this statement
+    SymbolTable symbols; // Create a new empty symbol table for this statement
 
     // Populate the symbol table
     for (const auto& pair : assignments) {

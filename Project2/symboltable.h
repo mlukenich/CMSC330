@@ -1,9 +1,7 @@
 /*
- * symboltable.h
- *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Defines a symbol table for storing variable names and their floating-point values.
+ * File: symboltable.h
+ * Name: Matt Lukenich
+ * Defines a symbol table for storing variable names and their floating point values
  */
 
 #ifndef SYMBOLTABLE_H_
@@ -25,5 +23,5 @@ private:
     map<string, double> variableMap;
 };
 
-#endif /* SYMBOLTABLE_H_ */
+#endif
 

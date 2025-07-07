@@ -1,9 +1,7 @@
 /*
- * statement.h
- *
- * Created on: July 6, 2025
- * Author: [Your Name]
- * Description: Defines the Statement class, which parses a full line of input
+ * File: statement.h
+ * Name: Matt Lukenich
+ * Defines the Statement class, which parses a full line of input
  * into an expression and a series of assignments.
  */
 
@@ -19,7 +17,7 @@ using namespace std;
 
 class Statement {
 public:
-    // Constructor that parses the line
+    // Constructor 
     Statement(const string& line);
 
     // Evaluates the statement and returns the result
@@ -30,4 +28,4 @@ private:
     map<string, string> assignments;
 };
 
-#endif /* STATEMENT_H_ */
+#endif
