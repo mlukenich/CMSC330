@@ -7,7 +7,7 @@
 // parses the next token. When the next non-whitespace character is a digit, it assumes a literal is next. 
 // When the next character is a left parenthesis, a recursive call is made to parse the subexpression.
 // Otherwise the next token is assumed to a variable. No checks are made to ensure correct syntax.
-
+/*
 #include <cctype>
 #include <iostream>
 #include <sstream>
@@ -39,4 +39,4 @@ Expression* Operand::parse(stringstream& in) {
     else
         return new Variable(parseName(in));
     return 0;
-}
+}*/

@@ -1,8 +1,17 @@
-// CMSC 330 Advanced Programming Languages
-// Project 2 Skeleton
-// UMGC CITE
-// Spring 2023
+/*
+ * File: parse.h
+ * Name: Matt Lukencih
+ * header for the recursive descent parser
+ */
 
-// This file contains the function prototype of the parseName function whose body is defined in parse.cpp.
+#ifndef PARSE_H_
+#define PARSE_H_
 
-string parseName(stringstream& in);
+#include <string>
+#include "expression.h"
+
+using namespace std;
+
+Expression* parse(const string& text);
+
+#endif 

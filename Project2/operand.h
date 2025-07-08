@@ -1,13 +1,38 @@
-// CMSC 330 Advanced Programming Languages
-// Project 2 Skeleton
-// UMGC CITE
-// Spring 2023
+#pragma once
+#include "expression.h"
+#include "symboltable.h"
+#include <string>
+#include <iostream>
 
-// This file contains the definition of the Operand class, which is a subclass of Expression. It is an
-// abstract class because it does not implement the evaluate function. It contains one static (class)
-// function parse that parses an operand as either a literal or variable.
+extern SymbolTable symbolTable;
 
-class Operand: public Expression {
+/*
+ * File: operand.h
+ * Name: Matt Lukenich
+ * Calls evaluate function for differnt object types 
+ */
+class Operand : public Expression {};
+
+// calls evaluate for literal values
+class Literal : public Operand {
 public:
-    static Expression* parse(stringstream& in);
+    explicit Literal(double value) : value(value) {}
+    double evaluate() override {
+        std::cout << "DEBUG: EVALUATE Literal -> " << value << std::endl;
+        return value;
+    }
+private:
+    double value;
+};
+
+// calls evaluate for variables
+class Variable : public Operand {
+public:
+    explicit Variable(std::string name) : name(std::move(name)) {}
+    double evaluate() override {
+        std::cout << "DEBUG: EVALUATE Variable '" << name << "'" << std::endl;
+        return symbolTable.lookUp(name);
+    }
+private:
+    std::string name;
 };
